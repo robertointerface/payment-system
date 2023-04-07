@@ -5,7 +5,7 @@ description = "state machine payment system"
 authors = ["roberto <robertointerface@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "payment_system"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.8"
