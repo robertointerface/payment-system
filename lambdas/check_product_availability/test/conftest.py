@@ -29,11 +29,11 @@ def load_product_data_in_database():
     _ = db.products.insert_many(products)
     return products
 
-
+@pytest.fixture(name="order_id")
 def load_order_data_in_database():
     orders_data_file = TEST_DATA_PATH / "order_data.json"
-    orders = json.loads(orders_data_file.read_text())
+    order = json.loads(orders_data_file.read_text())
     db = mongo_init.MONGO_CONNECTION[mongo_init.PAYMENT_SYSTEM_DATABASE_NAME]
-    _ = db.orders.insert_many(orders)
-    return orders
+    _ = db.orders.insert_one(order)
+    return order['order_id']
 
