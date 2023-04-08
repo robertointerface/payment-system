@@ -1,10 +1,10 @@
 import os
 from typing import Type
-from data_getters import MongoOrderDataGetter
+from check_product_availability_lambda.data_getters import MongoOrderDataGetter
 ALLOWED_ORDER_DATA_GETTERS = ('REST_API', "MongoDb")
 
 
-def order_data_getter_factory() ->MongoOrderDataGetter:
+def order_data_getter_factory() -> Type[MongoOrderDataGetter]:
     """
     Factory to choose the class that retrieves order data.
 
