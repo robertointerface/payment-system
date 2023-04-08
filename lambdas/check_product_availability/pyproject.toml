@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "check-product-availability"
+version = "0.1.0"
+description = "check if product is available and can be bought"
+authors = ["roberto <robertointerface@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.9"
+motor = "^3.1.2"
+pymongo = "^4.3.3"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
