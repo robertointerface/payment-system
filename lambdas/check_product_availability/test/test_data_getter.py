@@ -1,8 +1,9 @@
 import os
 import uuid
-
 import pytest
-from check_product_availability_lambda.data_getters import MongoOrderDataGetter
+from check_product_availability_lambda.data_getters import (
+    MongoOrderDataGetter,
+    OrderData)
 from check_product_availability_lambda.exceptions import OrderNotFoundException
 from check_product_availability_lambda.factories import order_data_getter_factory
 
@@ -56,4 +57,9 @@ class TestMongoOrderDataGetter:
         with pytest.raises(OrderNotFoundException):
             data_getter.get_order_data(non_existing_order_id)
 
-    
+    def test_property_order_data_returns_correct_type(self,
+                                                      products_data,
+                                                      order_id):
+        data_getter = MongoOrderDataGetter()
+        data_getter.get_order_data(order_id)
+        assert isinstance(data_getter.order_data, OrderData)

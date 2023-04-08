@@ -1,19 +1,24 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from pydantic import BaseModel
 from check_product_availability_lambda.database_connection import (
     get_database_connection,
     PAYMENT_SYSTEM_DATABASE_NAME)
 from check_product_availability_lambda.exceptions import OrderNotFoundException
 
 
-@dataclass
-class OrderData:
+class ProductData(BaseModel):
     product_id: str
     name: str
     price: float
     requested_count: int
     delivery_address: str
     type: str = None
+
+
+class OrderData(BaseModel):
+    order_id: str
+    user_id: str
+    products: list[ProductData]
 
 
 class OrderDataGetter(ABC):
@@ -50,4 +55,4 @@ class MongoOrderDataGetter(OrderDataGetter):
 
     @property
     def order_data(self) -> OrderData:
-        pass
+        return OrderData(**self.__raw_order_data)

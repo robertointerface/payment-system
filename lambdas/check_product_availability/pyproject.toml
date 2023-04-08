@@ -11,6 +11,7 @@ packages = []
 python = "^3.9"
 motor = "^3.1.2"
 pymongo = "^4.3.3"
+pydantic = "^1.10.7"
 
 
 [tool.poetry.group.dev.dependencies]
