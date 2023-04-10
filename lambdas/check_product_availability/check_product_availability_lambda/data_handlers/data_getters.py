@@ -1,9 +1,12 @@
+from typing import Callable
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from check_product_availability_lambda.database_connection import (
     get_database_connection,
     PAYMENT_SYSTEM_DATABASE_NAME)
 from check_product_availability_lambda.exceptions import OrderNotFoundException
+from check_product_availability_lambda.update_methods import \
+    create_mongodb_update_operation
 
 
 class ProductData(BaseModel):
@@ -12,7 +15,7 @@ class ProductData(BaseModel):
     price: float
     requested_count: int
     delivery_address: str
-    type: str = None
+    type: str
 
 
 class OrderData(BaseModel):
