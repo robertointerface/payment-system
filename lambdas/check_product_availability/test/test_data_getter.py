@@ -1,16 +1,18 @@
 import os
 import uuid
 import pytest
-from check_product_availability_lambda.data_getters import (
+from check_product_availability_lambda.data_handlers.data_getters import (
     MongoOrderDataGetter,
     OrderData)
+from check_product_availability_lambda.data_handlers.data_strategies import \
+    MongoDbDataHandlers
 from check_product_availability_lambda.exceptions import OrderNotFoundException
 from check_product_availability_lambda.factories import order_data_getter_factory
 
 
 @pytest.mark.parametrize('data_getter_variable,expected_result',
                          [
-                             ('MongoDb', MongoOrderDataGetter)
+                             ('MongoDb', MongoDbDataHandlers)
                          ]
                          )
 def test_factory_method_order_data_getter_factory_returns_correct_method(
@@ -29,14 +31,14 @@ def test_factory_method_order_data_getter_factory_returns_correct_method(
 
 def test_factory_method_order_data_getter_factory_raises_error_when_incorrect_environ_variable_defined():
     """
-    Test factory method order_data_getter_factory raises valuerror when incorrect
+    Test factory method order_data_getter_factory raises ValueError when incorrect
     environment variable is set.
     """
     os.environ['ORDER_DATA_GETTER'] = "Non-existing-data-getter"
     with pytest.raises(ValueError) as exc_info:
         _ = order_data_getter_factory()
     expected_key_phrases = ["Specified order data getter was not defined",
-                          "is not implemented"]
+                            "is not implemented"]
     for phrase in expected_key_phrases:
         assert phrase in str(exc_info.value), \
             f"expected phrase '{phrase}' should be on error message when order data getter is wrongly defined"
@@ -63,3 +65,4 @@ class TestMongoOrderDataGetter:
         data_getter = MongoOrderDataGetter()
         data_getter.get_order_data(order_id)
         assert isinstance(data_getter.order_data, OrderData)
+

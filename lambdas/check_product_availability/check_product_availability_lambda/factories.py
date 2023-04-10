@@ -1,10 +1,13 @@
 import os
 from typing import Type
-from check_product_availability_lambda.data_getters import MongoOrderDataGetter
+from check_product_availability_lambda.data_handlers.data_strategies import \
+    MongoDbDataHandlers
+
 ALLOWED_ORDER_DATA_GETTERS = ('REST_API', "MongoDb")
+ALLOWED_PRODUCT_DATA_UPDATERS = ('REST_API', "MongoDb")
 
 
-def order_data_getter_factory() -> Type[MongoOrderDataGetter]:
+def order_data_getter_factory() -> Type[MongoDbDataHandlers]:
     """
     Factory to choose the class that retrieves order data.
 
@@ -26,4 +29,6 @@ def order_data_getter_factory() -> Type[MongoOrderDataGetter]:
                          f' specified methodology "{data_getter_methodology}" '
                          f'is not implemented.')
     if data_getter_methodology == "MongoDb":
-        return MongoOrderDataGetter
+        return MongoDbDataHandlers
+
+
