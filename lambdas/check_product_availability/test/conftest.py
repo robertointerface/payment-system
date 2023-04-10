@@ -1,3 +1,4 @@
+import os
 import pathlib
 import json
 import pytest
@@ -29,6 +30,16 @@ def load_product_data_in_database():
     _ = db.products.insert_many(products)
     return products
 
+
+@pytest.fixture(name='products_data_non_available')
+def load_product_data_with_non_available_products_in_database():
+    products_data_file = TEST_DATA_PATH / "products_data_not_available.json"
+    products = json.loads(products_data_file.read_text())
+    db = mongo_init.MONGO_CONNECTION[mongo_init.PAYMENT_SYSTEM_DATABASE_NAME]
+    _ = db.products.insert_many(products)
+    return products
+
+
 @pytest.fixture(name="order_id")
 def load_order_data_in_database():
     orders_data_file = TEST_DATA_PATH / "order_data.json"
@@ -37,3 +48,7 @@ def load_order_data_in_database():
     _ = db.orders.insert_one(order)
     return order['order_id']
 
+
+@pytest.fixture
+def set_environ_variables():
+    os.environ['ORDER_DATA_GETTER'] = 'MongoDb'
