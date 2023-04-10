@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import List
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 from check_product_availability_lambda.database_connection import (
@@ -19,7 +19,7 @@ class ProductData(BaseModel):
 class OrderData(BaseModel):
     order_id: str
     user_id: str
-    products: list[ProductData]
+    products: List[ProductData]
 
 
 class OrderDataGetter(ABC):

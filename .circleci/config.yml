@@ -14,9 +14,11 @@ jobs:
   check-product-availability-unit-test:
     docker:
       - image: << pipeline.parameters.python-ci-image >>
-    working_directory: ~/project
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/check_product_availability
     steps:
-      - checkout
+      - checkout:
+          path: ~/project
       - python/install-packages:
           args: '--with dev'
           pkg-manager: poetry
@@ -24,7 +26,7 @@ jobs:
           venv-cache: false
       - run:
           name: Run tests
-          command: poetry run pytest
+          command: poetry run pytest test
 
 workflows:
   sample:
