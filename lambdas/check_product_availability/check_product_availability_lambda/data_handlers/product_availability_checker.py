@@ -1,4 +1,4 @@
-from check_product_availability_lambda.data_getters import ProductData
+from check_product_availability_lambda.data_handlers.data_getters import ProductData
 from check_product_availability_lambda.database_connection import(
     get_database_connection,
     PAYMENT_SYSTEM_DATABASE_NAME)
