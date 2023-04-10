@@ -11,13 +11,14 @@ parameters:
     default: "858290205983.dkr.ecr.eu-west-2.amazonaws.com/circleci-devs:latest"
 
 jobs:
-  build-and-test: # This is the name of the job, feel free to change it to better match what you're trying to do!
+  check-product-availability-unit-test:
     docker:
       - image: << pipeline.parameters.python-ci-image >>
     working_directory: ~/project
     steps:
       - checkout
       - python/install-packages:
+          args: '--with dev'
           pkg-manager: poetry
           pypi-cache: false
           venv-cache: false
