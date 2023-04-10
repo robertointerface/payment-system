@@ -12,6 +12,7 @@ python = "^3.9"
 motor = "^3.1.2"
 pymongo = "^4.3.3"
 pydantic = "^1.10.7"
+boto3 = "^1.26.109"
 
 
 [tool.poetry.group.dev.dependencies]
