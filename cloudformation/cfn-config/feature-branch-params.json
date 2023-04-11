@@ -1,0 +1,7 @@
+{
+  "DatabaseClusterSecretArn": "arn:aws:secretsmanager:eu-west-2:858290205983:secret:DATABASE_CLUSTER_SECRET-zaXuOY",
+  "DatabasePasswordSecretArn": "arn:aws:secretsmanager:eu-west-2:858290205983:secret:DATABASE_PASSWORD_SECRET-P4tPMm",
+  "DatabaseUsernameSecretArn": "arn:aws:secretsmanager:eu-west-2:858290205983:secret:DATABASE_USERNAME_SECRET-fkluZa"
+  "PaymentSystemDatabaseName": "payment_system",
+  "OrderDataGetter": "MongoDb"
+}

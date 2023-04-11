@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS CloudFormation template for payment state machine
+
+Parameters:
+  DatabaseClusterSecretArn:
+    Type: String
+  DatabasePasswordSecretArn:
+    Type: String
+  DatabaseUsernameSecretArn:
+    Type: String
+  PaymentSystemDatabaseName:
+    Type: String
+  OrderDataGetter:
+    Type: String
+
+Resources:
+  ReadDatabaseRelatedSecretsPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Action:
+            - "secretsmanager:GetSecretValue"
+          Resource:
+            - !Ref DatabaseClusterSecretArn
+            - !Ref DatabasePasswordSecretArn
+            - !Ref DatabaseUsernameSecretArn
+          Effect: "Allow"
+
+  AllLogsAccessPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "logs:*"
+            Resource: "arn:aws:logs:*:*:*"
+
+  CheckProductAvailabilityLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref AllLogsAccessPolicy
+        - !Ref ReadDatabaseRelatedSecretsPolicy
+      RoleName: CheckProductAvailabilityLambdaRole
+
+  CheckProductAvailabilityLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../lambdas/check_product_availability
+      Handler: check_product_availability_lambda.lambda_handler.lambda_handler
+      Runtime: python3.8
+      Timeout: 120
+      MemorySize: 256
+      Environment:
+        Variables:
+          PAYMENT_SYSTEM_DATABASE_NAME: !Ref PaymentSystemDatabaseName
+          DATABASE_USERNAME_SECRET: !Ref DatabaseUsernameSecretArn
+          DATABASE_PASSWORD_SECRET: !Ref DatabasePasswordSecretArn
+          DATABASE_CLUSTER_SECRET: !Ref DatabaseClusterSecretArn
+          ORDER_DATA_GETTER: !Ref OrderDataGetter
+      Role: !GetAtt CheckProductAvailabilityLambdaRole.Arn
