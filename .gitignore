@@ -130,3 +130,12 @@ dmypy.json
 
 
 .idea/*
+cfn_output_check_availability_lambda.yml
+./lambdas/check_product_availability/docs/*
+lambdas/check_product_availability/docs/
+
+lambdasZip/
+
+lambdas/check_product_availability/requirements.txt
+
+cloudformation/cfn-config/feature-branch-params.txt
