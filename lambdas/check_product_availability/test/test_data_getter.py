@@ -65,4 +65,3 @@ class TestMongoOrderDataGetter:
         data_getter = MongoOrderDataGetter()
         data_getter.get_order_data(order_id)
         assert isinstance(data_getter.order_data, OrderData)
-

@@ -26,7 +26,9 @@ jobs:
           venv-cache: false
       - run:
           name: Run tests
-          command: poetry run pytest test
+          command: poetry run pytest test --junit-xml=tests.xml
+      - store_test_results:
+          path: tests.xml
 
 workflows:
   sample:

@@ -139,3 +139,5 @@ lambdasZip/
 lambdas/check_product_availability/requirements.txt
 
 cloudformation/cfn-config/feature-branch-params.txt
+
+lambdas/check_product_availability/tests.xml
