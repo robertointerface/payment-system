@@ -2,21 +2,21 @@
   {
   "user_id": "86e815e9-0228-49fe-8d3d-12dc51859ea3",
   "username": "Batman",
-  "credit": 150.45
+  "credit": 1500.45
 },
 {
   "user_id": "fa0eb278-abbb-4f32-8560-bffab6fa7791",
   "username": "Robin",
-  "credit": 50.45
+  "credit": 500.45
 },
 {
   "user_id": "19bee47a-bd42-444e-8ab1-28c531e03c57",
   "username": "Joker",
-  "credit": 350.45
+  "credit": 3500.45
 },
 {
   "user_id": "6f4347fc-4354-4f99-b1eb-15d6233184dd",
-  "username": "Flash",
+  "username": "SpiderMan",
   "credit": 5.45
 }
 ]

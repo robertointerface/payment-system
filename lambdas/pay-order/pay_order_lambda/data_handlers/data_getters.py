@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import List
 from pydantic import BaseModel
-
+from pay_order_lambda.exceptions import OrderNotFoundException
 from pay_order_lambda.database_connection import get_database_connection, \
     PAYMENT_SYSTEM_DATABASE_NAME
 
 
 class ProductData(BaseModel):
+
     product_id: str
     price: float
     requested_count: int
@@ -18,8 +19,9 @@ class OrderData(BaseModel):
     user_id: str
     products: List[ProductData]
 
+    @property
     def total_payment(self):
-        pass
+        return sum([product.price for product in self.products])
 
 
 class OrderDataGetter(ABC):

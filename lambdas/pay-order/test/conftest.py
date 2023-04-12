@@ -3,7 +3,7 @@ import pathlib
 import json
 import pytest
 import pymongo
-from check_product_availability_lambda import database_connection as mongo_init
+from pay_order_lambda import database_connection as mongo_init
 
 TEST_DATA_PATH = pathlib.Path(__file__).parent / "test_data"
 
@@ -49,6 +49,14 @@ def load_order_data_in_database():
     return order['order_id']
 
 
+@pytest.fixture(name="insert_users")
+def load_user_data_in_database():
+    users_data_file = TEST_DATA_PATH / "users_data.json"
+    users = json.loads(users_data_file.read_text())
+    db = mongo_init.MONGO_CONNECTION[mongo_init.PAYMENT_SYSTEM_DATABASE_NAME]
+    inserted_users = db.users.insert_many(users)
+    return inserted_users.inserted_ids
+
 @pytest.fixture
 def set_environ_variables():
-    os.environ['ORDER_DATA_GETTER'] = 'MongoDb'
+    os.environ['PAYMENT_DATA_HANDLER'] = 'Credit'
