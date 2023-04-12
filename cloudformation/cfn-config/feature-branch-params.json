@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "OrderDataGetter",
+    "ParameterValue": "MongoDb"
+  },
+  {
+    "ParameterKey": "PaymentSystemDatabaseName",
+    "ParameterValue": "payment_system"
+  },
+  {
+    "ParameterKey": "DatabaseClusterDomain",
+    "ParameterValue": "practice"
+  }
+]

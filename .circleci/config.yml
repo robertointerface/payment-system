@@ -11,23 +11,27 @@ parameters:
     default: "858290205983.dkr.ecr.eu-west-2.amazonaws.com/circleci-devs:latest"
 
 jobs:
-  build-and-test: # This is the name of the job, feel free to change it to better match what you're trying to do!
+  check-product-availability-unit-test:
     docker:
       - image: << pipeline.parameters.python-ci-image >>
-    working_directory: ~/project
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/check_product_availability
     steps:
-      - checkout
+      - checkout:
+          path: ~/project
       - python/install-packages:
+          args: '--with dev'
           pkg-manager: poetry
           pypi-cache: false
           venv-cache: false
       - run:
           name: Run tests
-          command: poetry run pytest
+          command: poetry run pytest test --junit-xml=tests.xml
+      - store_test_results:
+          path: tests.xml
 
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  sample:
     jobs:
-      - build-and-test
+      - check-product-availability-unit-test
 
