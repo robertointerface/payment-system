@@ -23,7 +23,8 @@ class OrderData(BaseModel):
 
 
 class OrderDataGetter(ABC):
-
+    """Abstract class for order data getter, class dictates the interface/protocols
+    of the classes which purpose is to get order data."""
     @abstractmethod
     def __init__(self):
         self.__order_data = None
@@ -39,12 +40,20 @@ class OrderDataGetter(ABC):
 
 
 class MongoOrderDataGetter(OrderDataGetter):
-
+    """
+    Get order data from mongodb.
+    """
     def __init__(self):
         self.__raw_order_data = None
 
     def get_order_data(self, order_id: str):
-        # call mongodb and query by order id
+        """Get the order data from mongodb with the specified database
+            configurations. The order information is saved inside attribute
+            __raw_order_data so later it can be converted to any specified format.
+
+        Args:
+            order_id: The order id
+        """
         mongo_connection = get_database_connection()
         db = mongo_connection[PAYMENT_SYSTEM_DATABASE_NAME]
         order_data = db.orders.find_one({'order_id': order_id})
@@ -56,4 +65,5 @@ class MongoOrderDataGetter(OrderDataGetter):
 
     @property
     def order_data(self) -> OrderData:
+        """Convert extracted data into dataclass OrderData"""
         return OrderData(**self.__raw_order_data)

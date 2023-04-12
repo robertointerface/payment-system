@@ -6,7 +6,9 @@ from check_product_availability_lambda.database_connection import \
 
 
 class UpdateProductsMongo:
-
+    """
+    Update products data to Mongodb
+    """
     def __init__(self, products: List[ProductData]):
         self.products = products
 

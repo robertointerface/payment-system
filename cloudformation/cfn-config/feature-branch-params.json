@@ -1,22 +1,14 @@
 [
   {
-    "ParameterKey": "DatabaseClusterSecretArn",
-    "ParameterValue": "arn:aws:secretsmanager:eu-west-2:858290205983:secret:DATABASE_CLUSTER_SECRET-zaXuOY"
-  },
-  {
-    "ParameterKey": "DatabasePasswordSecretArn",
-    "ParameterValue": "arn:aws:secretsmanager:eu-west-2:858290205983:secret:DATABASE_PASSWORD_SECRET-P4tPMm"
-  },
-  {
-    "ParameterKey": "DatabaseUsernameSecretArn",
-    "ParameterValue": "arn:aws:secretsmanager:eu-west-2:858290205983:secret:DATABASE_USERNAME_SECRET-fkluZa"
-  },
-  {
     "ParameterKey": "OrderDataGetter",
     "ParameterValue": "MongoDb"
   },
   {
     "ParameterKey": "PaymentSystemDatabaseName",
     "ParameterValue": "payment_system"
+  },
+  {
+    "ParameterKey": "DatabaseClusterDomain",
+    "ParameterValue": "practice"
   }
 ]

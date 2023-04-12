@@ -10,9 +10,10 @@ packages = [{ include = "check_product_availability_lambda" }]
 [tool.poetry.dependencies]
 python = "^3.8"
 motor = "^3.1.2"
-pymongo = "^4.3.3"
+pymongo = {extras = ["aws"], version = "^4.3.3"}
 pydantic = "^1.10.7"
 boto3 = "^1.26.109"
+pymongo-auth-aws = "^1.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
