@@ -17,21 +17,42 @@ jobs:
       - image: circleci/mongo:4.4.12
     working_directory: ~/project/lambdas/check_product_availability
     steps:
-      - checkout:
-          path: ~/project
+      - run-unit-tests
+
+  pay-order-unit-test:
+    docker:
+      - image: << pipeline.parameters.python-ci-image >>
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/pay-order
+    steps:
+      - run-unit-tests
+
+workflows:
+  main:
+    jobs:
+      - check-product-availability-unit-test
+      - pay-order-unit-test
+
+
+commands:
+
+  setup-dev-dependencies:
+    description: "Install poetry dependencies with dev"
+    steps:
       - python/install-packages:
           args: '--with dev'
           pkg-manager: poetry
           pypi-cache: false
           venv-cache: false
+
+  run-unit-tests:
+    description: "Install poetry dependencies and run unit test"
+    steps:
+      - checkout:
+          path: ~/project
+      - setup-dev-dependencies
       - run:
           name: Run tests
           command: poetry run pytest test --junit-xml=tests.xml
       - store_test_results:
           path: tests.xml
-
-workflows:
-  sample:
-    jobs:
-      - check-product-availability-unit-test
-
