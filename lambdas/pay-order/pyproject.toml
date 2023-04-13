@@ -5,7 +5,7 @@ description = "pay the order, charge the order to the user credit"
 authors = ["roberto <robertointerface@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "pay_order"}]
+packages = [{include = "pay_order_lambda"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
