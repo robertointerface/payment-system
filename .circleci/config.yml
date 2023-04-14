@@ -37,6 +37,16 @@ jobs:
           command: |
             echo "export STACK_PREFIX=`echo ${CIRCLE_BRANCH}`" >> $BASH_ENV 
 
+  group-all-unit-testing:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - run:
+          name: wait for unit test to complete
+          command: |
+            echo "Finish all unit testing"
+  
+
 workflows:
   main:
     jobs:
