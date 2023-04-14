@@ -71,7 +71,6 @@ commands:
   setup-dependencies:
     description: "Install poetry dependencies"
     steps:
-      - poetry-authenticate
       - python/install-packages:
           pkg-manager: poetry
           pypi-cache: false
