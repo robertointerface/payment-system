@@ -107,6 +107,7 @@ commands:
       - run:
           name: Build State Machine JSON
           command: |
+            aws configure set --region eu-west-2
             poetry run build-all-state-machine-json-files
       - run:
           name: Prepare cloudformation package
