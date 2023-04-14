@@ -10,5 +10,13 @@
   {
     "ParameterKey": "DatabaseClusterDomain",
     "ParameterValue": "practice"
+  },
+  {
+    "ParameterKey": "PaymentDataHandler",
+    "ParameterValue": "Credit"
+  },
+  {
+    "ParameterKey": "ErrorDatabase",
+    "ParameterValue": "errors"
   }
 ]

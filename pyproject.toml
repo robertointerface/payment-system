@@ -5,7 +5,7 @@ description = "state machine payment system"
 authors = ["roberto <robertointerface@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = []
+packages = [{include = "state_machine"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -19,3 +19,8 @@ pytest = "^7.2.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+build-all-state-machine-json-files = 'state_machine.cli:write_state_machine_json'
+inject-all-state-machine-json = 'state_machine.cli:inject_all_state_machines_to_cloud_formation'
