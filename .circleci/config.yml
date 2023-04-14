@@ -36,6 +36,8 @@ jobs:
           name: "Deploying testing infrastructure"
           command: |
             echo "export STACK_PREFIX=`echo ${CIRCLE_BRANCH}`" >> $BASH_ENV 
+      - deploy-pay-system-stack:
+          stack-prefix: $STACK_PREFIX
 
   group-all-unit-testing:
     docker:
