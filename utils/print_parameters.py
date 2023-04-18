@@ -3,7 +3,7 @@ import json
 
 
 if __name__ == "__main__":
-    json_params_file = pathlib.Path(__file__).parent.parent / "cloudformation" / "cfn-config" / "feature-branch-params.json"
+    json_params_file = pathlib.Path(__file__).parent.parent / "cloudformation" / "cfn-config" / "feature-branch-params-deploy.json"
     parameters = json.loads(json_params_file.read_text())
     params = [f"{param['ParameterKey']}={param['ParameterValue']}"
               for param in parameters]

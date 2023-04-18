@@ -42,13 +42,17 @@ jobs:
             poetry config virtualenvs.create true
             poetry config virtualenvs.in-project true
       - run:
-          name: create directory save spec captures ids
+          name: create directory save state machine json definition
           command: |
             DIR='state_machine/state-machine-json'
             if [ -d "$DIR" ]; then
               rm -r $DIR
             fi
             mkdir $DIR
+      - run:
+          name: create parameter json file for deployment of cloudformation
+          command: |
+            python utils/add_branch_name_to_cloudformation_params.py $CIRCLE_BRANCH
       - run:
           name: "Deploying testing infrastructure"
           command: |
@@ -64,7 +68,16 @@ jobs:
           name: wait for unit test to complete
           command: |
             echo "Finish all unit testing"
-  
+
+  delete-testing-infrastructures:
+    docker:
+        - image: << pipeline.parameters.python-ci-image >>
+    steps:
+      - run:
+          name: Delete Dedicated Feature Stack
+          command: |
+            export STACK_PREFIX=$CIRCLE_BRANCH
+            aws cloudformation delete-stack --stack-name ${STACK_PREFIX}-payment-state-machine
 
 workflows:
   main:
@@ -82,6 +95,13 @@ workflows:
       - deploy-testing-infrastructures:
           requires:
             - approve-testing-stack-deployment
+      - approve-delete-testing-infrastructure:
+          type: approval
+          requires:
+            - group-all-unit-testing
+      - delete-testing-infrastructures:
+          requires:
+            - approve-delete-testing-infrastructure
 
 commands:
 
