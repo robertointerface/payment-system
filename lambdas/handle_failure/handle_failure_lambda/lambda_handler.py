@@ -21,12 +21,10 @@ class ErrorData(BaseModel):
 
 
 def lambda_handler(event, context):
-    print(f'EVENT {event}')
     error_details = event.get('error_details')
     if error_details is None:
-        # raise error here
-        pass
-    error_data = ErrorData(error_details)
+        raise ValueError(f'Error detail was not provided in Handle Failure Lambda')
+    error_data = ErrorData(**error_details)
     mongo_client = get_database_connection()
     db = mongo_client[ERRORS_DATABASE_NAME]
     db['payment-errors'].insert_one(error_data.format_mongodb())

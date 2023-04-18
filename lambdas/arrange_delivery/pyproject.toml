@@ -1,16 +1,15 @@
 [tool.poetry]
-name = "handle-failure"
+name = "arrange-delivery"
 version = "0.1.0"
-description = "handle failure of payment state machine"
+description = "arrange product delivery once is payed"
 authors = ["roberto <robertointerface@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "handle_failure_lambda"}]
+packages = [{include = "arrange_delivery"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pymongo = {extras = ["aws"], version = "^4.3.3"}
-boto3 = "^1.26.113"
 pydantic = "^1.10.7"
 
 
