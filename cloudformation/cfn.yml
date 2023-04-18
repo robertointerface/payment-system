@@ -11,9 +11,11 @@ Parameters:
     Type: String
   PaymentDataHandler:
     Type: String
+  ErrorDatabase:
+    Type: String
+
 
 Resources:
-
   DatabaseMongoSecurityGroup:
     Properties:
       GroupDescription: Group to access mongodb vpc

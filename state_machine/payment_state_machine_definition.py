@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from typing import Dict, Any
 
@@ -126,6 +127,7 @@ def create_payment_state_machine_definition():
 
 
 def create_payment_state_machine() -> Workflow:
+
     workflow = Workflow(
         name=f'payment-statemachine',
         definition=create_payment_state_machine_definition(),
@@ -134,13 +136,13 @@ def create_payment_state_machine() -> Workflow:
     return workflow
 
 
-if __name__ == "__main__":
-    import boto3
-    import json
-    st_input = {
-        "order_id": "311b559c-2dde-4a95-b7a3-30fbf60a2d9c"
-    }
-    client = boto3.client('stepfunctions')
-    execution = client.start_execution(
-        stateMachineArn="arn:aws:states:eu-west-2:858290205983:stateMachine:process-payment",
-        input=json.dumps(st_input))
+# if __name__ == "__main__":
+#     import boto3
+#     import json
+#     st_input = {
+#         "order_id": "311b559c-2dde-4a95-b7a3-30fbf60a2d9c"
+#     }
+#     client = boto3.client('stepfunctions')
+#     execution = client.start_execution(
+#         stateMachineArn="arn:aws:states:eu-west-2:858290205983:stateMachine:process-payment",
+#         input=json.dumps(st_input))

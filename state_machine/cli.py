@@ -11,7 +11,7 @@ def write_state_machine_json():
         (create_payment_state_machine(), PROCESS_PAYMENT_STATE_MACHINE_JSON_FILE),
     ]
     for workflow_definition, output_file in state_machines:
-        with open(output_file, "w") as file:
+        with open(output_file, "w+") as file:
             file.write(workflow_definition.definition.to_json())
 
 

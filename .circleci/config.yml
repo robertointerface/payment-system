@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   python: circleci/python@2.0.3
-  aws-cli: circleci/aws-cli@1.2.1
+  aws-cli: circleci/aws-cli@3.1.5
   aws-s3: circleci/aws-s3@2.0
 
 parameters:
@@ -30,8 +30,25 @@ jobs:
   deploy-testing-infrastructures:
     docker:
       - image: << pipeline.parameters.python-ci-image >>
+    environment:
+      AWS_REGION: eu-west-2
+      AWS_DEFAULT_REGION: eu-west-2
     working_directory: ~/project
     steps:
+      - checkout
+      - run:
+          name: config poetry
+          command: |
+            poetry config virtualenvs.create true
+            poetry config virtualenvs.in-project true
+      - run:
+          name: create directory save spec captures ids
+          command: |
+            DIR='state_machine/state-machine-json'
+            if [ -d "$DIR" ]; then
+              rm -r $DIR
+            fi
+            mkdir $DIR
       - run:
           name: "Deploying testing infrastructure"
           command: |
@@ -102,12 +119,10 @@ commands:
       stack-prefix:
         type: string
     steps:
-      - checkout
       - setup-dependencies
       - run:
           name: Build State Machine JSON
           command: |
-            aws configure set --region eu-west-2
             poetry run build-all-state-machine-json-files
       - run:
           name: Prepare cloudformation package
@@ -115,7 +130,7 @@ commands:
             poetry run inject-all-state-machine-json
             python ./utils/build_requirements_txt.py
             python ./utils/print_parameters.py
-            sam build --template cfn-injected.yml --parallel --build-dir ./state-machine-lambdas
+            poetry run sam build --template cfn-injected.yml --parallel --build-dir ./state-machine-lambdas
             aws cloudformation package --template-file ./state-machine-lambdas/template.yaml \
             --s3-bucket roberto-devops-payment-system --s3-prefix state-machine --output-template-file cfn_output_payment_state_machine.yml
       - run:
