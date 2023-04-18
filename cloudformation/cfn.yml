@@ -170,7 +170,7 @@ Resources:
     Type: "AWS::StepFunctions::StateMachine"
     DeletionPolicy: Retain
     Properties:
-      StateMachineName: !Join ['-' [!Ref CurrentBranch, "process-payment"] ]
+      StateMachineName: !Join ['-', [!Ref CurrentBranch, "process-payment"]]
       DefinitionString: !Sub
         - |
         ##{{PROCESS_PAYMENT_DEF}}
