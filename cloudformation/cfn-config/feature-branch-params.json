@@ -18,5 +18,9 @@
   {
     "ParameterKey": "ErrorDatabase",
     "ParameterValue": "errors"
+  },
+  {
+    "ParameterKey": "CurrentBranch",
+    "ParameterValue": "develop-handle-failure-lambda"
   }
 ]
