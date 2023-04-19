@@ -39,5 +39,24 @@ deployed pipeline.
 - Lambdas are deployed just as package code, lambdas can be deployed by means of Dockerfile if prefered.
 
 
-# INSTALLATION
-Each lambda has its own poetry.lock file, install poetry.
+# Running Tests
+
+Each lambda has its own unit testing, to run tests on each lambda you need
+first to install dependencies from poetry.lock file.
+
+If you don't have poetry, install poetry with command as below <br>
+
+curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.3.2 python3.8 -
+
+Navigate to the directory where poetry lock file is and run: <br>
+
+poetry install <br>
+or as below for install development and testing dependencies also.
+poetry install --with dev 
+
+
+Most Tests need a local mongodb running, to do so you can just get the docker
+image with the command below.
+
+docker run -it -v mongodata:/data/db -p 27017:27017 --name mongodb -d mongo
+

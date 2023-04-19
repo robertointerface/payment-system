@@ -61,6 +61,7 @@ class MakePaymentUserCredit(MakePayment):
                                            pipeline)
 
     def set_payment_details(self, payment_details: UserCreditPaymentDetails):
+        """Set payment details that will be used to process payment"""
         self.__payment_details = payment_details
 
     @property

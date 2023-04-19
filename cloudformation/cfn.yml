@@ -166,6 +166,20 @@ Resources:
           DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
       Role: !GetAtt StateMachineLambdaRole.Arn
 
+  ArrangeDeliveryLamda:
+    Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: lambdas/arrange_delivery
+        Handler: arrange_delivery_lambda.lambda_handler.lambda_handler
+        Runtime: python3.8
+        Timeout: 30
+        MemorySize: 256
+        Environment:
+          Variables:
+            PAYMENT_SYSTEM_DATABASE_NAME: !Ref PaymentSystemDatabaseName
+            DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+        Role: !GetAtt StateMachineLambdaRole.Arn
+
   ProcessPaymentStateMachine:
     Type: "AWS::StepFunctions::StateMachine"
     DeletionPolicy: Retain
@@ -177,4 +191,5 @@ Resources:
         - OrderProductsAvailableLambdaArn: !GetAtt CheckProductAvailabilityLambda.Arn
           PaymentOrderLambdaArn: !GetAtt PaymentOrderLambda.Arn
           HandleFailureLambdaArn: !GetAtt HandleFailureLambda.Arn
+          ArrangeDeliveryLambdaArn: !GetAtt ArrangeDeliveryLamda.Arn
       RoleArn: !GetAtt ProcessPaymentStateMachineRole.Arn
