@@ -4,6 +4,8 @@ Display AWS DevOps skills, Cloudformation, CI/CD, serverless, State Machine, cre
 This project is NOT production ready, the purpose of the project is not to run this state machine <br>
 on AWS, the purpose is to show State machine orchestration WITH a good CI/CD methodology.
 
+![Model](https://github.com/robertointerface/payment-system/blob/staging/state-machine-cropped.png)
+
 # WHAT TO LOOK FOR.
 1 - Cloudformation usage, couldformation file on cloudformation/cfn.yml <br>
 2 - State machine built with python package 'stepfunctions' in state_machine/payment_state_machine_definition.py . <br>
