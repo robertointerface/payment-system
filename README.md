@@ -1,5 +1,5 @@
 # payment-system
-Payment system implemented by an aws state machine.
+Display AWS DevOps skills, Cloudformation, CI/CD, serverless, State Machine, create a Payment system implemented by an aws state machine.
 
 This project is NOT production ready, the purpose of the project is not to run this state machine <br>
 on AWS, the purpose is to show State machine orchestration WITH a good CI/CD methodology.
@@ -19,7 +19,9 @@ creating the lambda and lambda will use specific classes depending on those envi
 easier inspection on CircleCI of test results.
 5 - Package management is done with Poetry which is more painful to handle than just pip BUT it will save <br>
 a lot of problems in the future as it keeps good track of all dependencies.
-
+6 - Lambdas use MongoDB database, As the state machine lives inside a VPC and the <br>
+MongoDB database is created on another VPC cluster, a peering connection was created <br>
+between those VPCs so only state machine VCP can try to connect to MongoDB
 
 # IMPROVEMENTS THAT NEED TO BE DONE
 - Data access should be done by means of a Rest API, GRAPHQL or any other third <br>
