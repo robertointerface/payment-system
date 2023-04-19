@@ -1,9 +1,19 @@
-
 from pay_order_lambda.factories import payment_method_factory
 from pay_order_lambda.make_payment import UserCreditPaymentDetails
 
 
 def lambda_handler(event, context):
+    """Process order payment.
+
+    First get the order details, second with the provided environment parameter
+        defined on lambda definition get the payment methodology, payment
+        methodologies need to follow protocol defined on abstract class
+        MakePayment.
+
+    Args:
+        event: Dictionary containing the order id
+        context:
+    """
     order_id = event.get('order_id')
     if order_id is None:
         raise ValueError(f'Order Id was not provided to the lambda Event')

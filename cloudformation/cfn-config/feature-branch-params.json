@@ -10,5 +10,17 @@
   {
     "ParameterKey": "DatabaseClusterDomain",
     "ParameterValue": "practice"
+  },
+  {
+    "ParameterKey": "PaymentDataHandler",
+    "ParameterValue": "Credit"
+  },
+  {
+    "ParameterKey": "ErrorDatabase",
+    "ParameterValue": "errors"
+  },
+  {
+    "ParameterKey": "CurrentBranch",
+    "ParameterValue": "develop-handle-failure-lambda"
   }
 ]

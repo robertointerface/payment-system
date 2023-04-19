@@ -1,8 +1,9 @@
+# CI/CD FOR PROCESS PAYMENT STATE MACHINE
 version: 2.1
 
 orbs:
   python: circleci/python@2.0.3
-  aws-cli: circleci/aws-cli@1.2.1
+  aws-cli: circleci/aws-cli@3.1.5
   aws-s3: circleci/aws-s3@2.0
 
 parameters:
@@ -27,14 +28,111 @@ jobs:
     steps:
       - run-unit-tests
 
+  handle-failure-unit-test:
+    docker:
+      - image: << pipeline.parameters.python-ci-image >>
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/handle_failure
+    steps:
+      - run-unit-tests
+
+  arrange-delivery-unit-test:
+    docker:
+      - image: << pipeline.parameters.python-ci-image >>
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/arrange_delivery
+    steps:
+      - run-unit-tests
+
+  deploy-testing-infrastructures:
+    docker:
+      - image: << pipeline.parameters.python-ci-image >>
+    environment:
+      AWS_REGION: eu-west-2
+      AWS_DEFAULT_REGION: eu-west-2
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: config poetry
+          command: |
+            poetry config virtualenvs.create true
+            poetry config virtualenvs.in-project true
+      - run:
+          name: create directory save state machine json definition
+          command: |
+            DIR='state_machine/state-machine-json'
+            if [ -d "$DIR" ]; then
+              rm -r $DIR
+            fi
+            mkdir $DIR
+      - run:
+          name: create parameter json file for deployment of cloudformation
+          command: |
+            python utils/add_branch_name_to_cloudformation_params.py $CIRCLE_BRANCH
+      - run:
+          name: "Deploying testing infrastructure"
+          command: |
+            echo "export STACK_PREFIX=`echo ${CIRCLE_BRANCH}`" >> $BASH_ENV 
+      - deploy-pay-system-stack:
+          stack-prefix: $STACK_PREFIX
+
+  group-all-unit-testing:
+    docker:
+      - image: cimg/base:2020.01
+    steps:
+      - run:
+          name: wait for unit test to complete
+          command: |
+            echo "Finish all unit testing"
+
+  delete-testing-infrastructures:
+    docker:
+        - image: << pipeline.parameters.python-ci-image >>
+    steps:
+      - run:
+          name: Delete Dedicated Feature Stack
+          command: |
+            export STACK_PREFIX=$CIRCLE_BRANCH
+            aws cloudformation delete-stack --stack-name ${STACK_PREFIX}-payment-state-machine
+
 workflows:
   main:
     jobs:
       - check-product-availability-unit-test
       - pay-order-unit-test
-
+      - handle-failure-unit-test
+      - arrange-delivery-unit-test
+      - group-all-unit-testing:
+          requires:
+            - check-product-availability-unit-test
+            - pay-order-unit-test
+            - handle-failure-unit-test
+            - arrange-delivery-unit-test
+      - approve-testing-stack-deployment:
+          type: approval
+          requires:
+            - group-all-unit-testing
+      - deploy-testing-infrastructures:
+          requires:
+            - approve-testing-stack-deployment
+      - approve-delete-testing-infrastructure:
+          type: approval
+          requires:
+            - deploy-testing-infrastructures
+      - delete-testing-infrastructures:
+          requires:
+            - approve-delete-testing-infrastructure
 
 commands:
+
+  setup-dependencies:
+    description: "Install poetry dependencies"
+    steps:
+      - python/install-packages:
+          pkg-manager: poetry
+          pypi-cache: false
+          venv-cache: false
 
   setup-dev-dependencies:
     description: "Install poetry dependencies with dev"
@@ -52,7 +150,44 @@ commands:
           path: ~/project
       - setup-dev-dependencies
       - run:
-          name: Run tests
-          command: poetry run pytest test --junit-xml=tests.xml
+          name: Run test
+          command: poetry run pytest test --junit-xml=test.xml
       - store_test_results:
-          path: tests.xml
+          path: test.xml
+
+  deploy-pay-system-stack:
+    parameters:
+      stack-prefix:
+        type: string
+    steps:
+      - setup-dependencies
+      - run:
+          name: Build State Machine JSON
+          command: |
+            poetry run build-all-state-machine-json-files
+      - run:
+          name: Prepare cloudformation package
+          command: |
+            poetry run inject-all-state-machine-json
+            python ./utils/build_requirements_txt.py
+            python ./utils/print_parameters.py
+            poetry run sam build --template cfn-injected.yml --parallel --build-dir ./state-machine-lambdas
+            aws cloudformation package --template-file ./state-machine-lambdas/template.yaml \
+            --s3-bucket roberto-devops-payment-system --s3-prefix state-machine --output-template-file cfn_output_payment_state_machine.yml
+      - run:
+          name: Deploy to Dedicated Feature Stack
+          command: |
+            export STACK_PREFIX=<<parameters.stack-prefix>>
+            aws cloudformation deploy --stack-name "$STACK_PREFIX-payment-state-machine" --region eu-west-2 --template-file cfn_output_payment_state_machine.yml \
+            --capabilities CAPABILITY_NAMED_IAM --parameter-overrides $(cat cloudformation/cfn-config/feature-branch-params.txt)
+
+  install-gh-cli:
+    description: "Install latest version of gh-cli"
+    steps:
+      - run:
+          name: install git hub cli latest
+          command: |
+            VERSION=`curl "https://api.github.com/repos/cli/cli/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-` 
+            curl -sSL https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_amd64.tar.gz -o gh_${VERSION}_linux_amd64.tar.gz
+            tar xvf gh_${VERSION}_linux_amd64.tar.gz
+            sudo cp gh_${VERSION}_linux_amd64/bin/gh /usr/bin/

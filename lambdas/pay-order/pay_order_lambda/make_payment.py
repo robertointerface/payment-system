@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Union
 from abc import ABC, abstractmethod
 from pydantic import BaseModel
 
@@ -13,7 +13,7 @@ class UserCreditPaymentDetails(BaseModel):
 
 
 class MakePayment(ABC):
-
+    """Abstract class to define protocols/interface for make payments"""
     @abstractmethod
     def make_payment(self):
         pass
@@ -25,8 +25,20 @@ class MakePayment(ABC):
 
 
 class MakePaymentUserCredit(MakePayment):
-
+    """Take order payment by deducting from his credit saved on database.
+    __payment_details attribute needs to be set first.
+    """
     def make_payment(self):
+        """Process Payment for a given order.
+
+        Get the user credit details.
+            If credit is less than amount to charge raise error.
+            If credit is enough reduce from the account and save back to
+            Database.
+
+        Raises:
+            NotEnoughCredictError: If user does  not have enough credit.
+        """
         mongo_connection = get_database_connection()
         db = mongo_connection[PAYMENT_SYSTEM_DATABASE_NAME]
         user = db.users.find_one({'user_id': self.user_id})
@@ -45,11 +57,11 @@ class MakePaymentUserCredit(MakePayment):
                 }
             }
         ]
-        updated_user = db.users.update_one({'user_id': self.user_id},
+        _ = db.users.update_one({'user_id': self.user_id},
                                            pipeline)
 
-
     def set_payment_details(self, payment_details: UserCreditPaymentDetails):
+        """Set payment details that will be used to process payment"""
         self.__payment_details = payment_details
 
     @property

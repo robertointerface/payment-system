@@ -141,3 +141,11 @@ lambdas/check_product_availability/requirements.txt
 cloudformation/cfn-config/feature-branch-params.txt
 
 lambdas/check_product_availability/tests.xml
+
+cfn-injected.yml
+
+build.toml
+state-machine-lambdas/*
+cfn_output_payment_state_machine.yml
+
+state_machine/state-machine-json/process-payment-state-machine.json
