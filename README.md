@@ -8,18 +8,18 @@ on AWS, the purpose is to show State machine orchestration WITH a good CI/CD met
 1 - Cloudformation usage, couldformation file on cloudformation/cfn.yml <br>
 2 - State machine built with python package 'stepfunctions' in state_machine/payment_state_machine_definition.py . <br>
 3 - Lambdas are defined under directory lambdas. <br>
-4 - State machine being deployed with CircleCI where circleci YML file is under .circleci/config.yml,<br>
-the state machine and cloudformation Stack are deployed with the Git branch name, this way multiple users can work and test <br>
-the state machine at the same time, otherwise you have multiple users tyring to deploy state machine with the same name. <br>
-STAGING-state-machine-name. Also, user gets the option to delete deployed cloudformation Stack with CircleCI web interface by just pushing a button.<br>
-5 - Lambdas 'check_product_availability' & 'pay-order' are quite modular, when for example the payment <br>
-methodology (by credit card, bank account or user credit) can be specified as environment variables when <br>
+4 - State machine being deployed with CircleCI where circleci YML file is under .circleci/config.yml,
+the state machine and cloudformation Stack are deployed with the Git branch name, this way multiple users can work and test
+the state machine at the same time, otherwise you have multiple users tyring to deploy state machine with the same name.
+STAGING-state-machine-name. Also, user gets the option to delete deployed cloudformation Stack with CircleCI web interface by just pushing a button.
+5 - Lambdas 'check_product_availability' & 'pay-order' are quite modular, when for example the payment
+methodology (by credit card, bank account or user credit) can be specified as environment variables when
 creating the lambda and lambda will use specific classes depending on those environment variables. <br>
 6 - Unit testing on the AWS Lambdas have coverage and results are saved on xml files which allows for easier inspection on CircleCI of test results.<br>
-7 - Package management is done with Poetry which is more painful to learn than just pip BUT it will save <br>
+7 - Package management is done with Poetry which is more painful to learn than just pip BUT it will save
 a lot of problems in the future as it keeps good track of all dependencies.
-6 - Lambdas use MongoDB database, As the state machine lives inside a VPC and the <br>
-MongoDB database is created on another VPC cluster, a peering connection was created <br>
+6 - Lambdas use MongoDB database, As the state machine lives inside a VPC and the
+MongoDB database is created on another VPC cluster, a peering connection was created 
 between those VPCs so only state machine VCP can try to connect to MongoDB
 
 # IMPROVEMENTS THAT NEED TO BE DONE
