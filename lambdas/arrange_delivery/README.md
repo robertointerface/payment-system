@@ -1,0 +1,1 @@
+Lambda To arrange products deliveries once payment is processed.

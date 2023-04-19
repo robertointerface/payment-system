@@ -13,7 +13,6 @@ class ProductData(BaseModel):
     requested_count: int
 
 
-# LOOK at discount on the fluent python recipe we had
 class OrderData(BaseModel):
     order_id: str
     user_id: str

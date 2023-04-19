@@ -5,10 +5,10 @@ description = "arrange product delivery once is payed"
 authors = ["roberto <robertointerface@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "arrange_delivery"}]
+packages = [{include = "arrange_delivery_lambda"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 pymongo = {extras = ["aws"], version = "^4.3.3"}
 pydantic = "^1.10.7"
 
@@ -16,6 +16,8 @@ pydantic = "^1.10.7"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
 pytest-env = "^0.8.1"
+pytest-cov = "^4.0.0"
+coverage = "^7.2.3"
 
 [build-system]
 requires = ["poetry-core"]

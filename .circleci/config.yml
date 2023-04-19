@@ -30,16 +30,18 @@ jobs:
   handle-failure-unit-test:
     docker:
       - image: << pipeline.parameters.python-ci-image >>
-      working_directory: ~/project/lambdas/handle_failure
-      steps:
-        - run-unit-tests
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/handle_failure
+    steps:
+      - run-unit-tests
 
   arrange-delivery-unit-test:
     docker:
       - image: << pipeline.parameters.python-ci-image >>
-      working_directory: ~/project/lambdas/arrange_delivery
-      steps:
-        - run-unit-tests
+      - image: circleci/mongo:4.4.12
+    working_directory: ~/project/lambdas/arrange_delivery
+    steps:
+      - run-unit-tests
 
   deploy-testing-infrastructures:
     docker:
@@ -147,10 +149,10 @@ commands:
           path: ~/project
       - setup-dev-dependencies
       - run:
-          name: Run tests
-          command: poetry run pytest test --junit-xml=tests.xml
+          name: Run test
+          command: poetry run pytest test --junit-xml=test.xml
       - store_test_results:
-          path: tests.xml
+          path: test.xml
 
   deploy-pay-system-stack:
     parameters:

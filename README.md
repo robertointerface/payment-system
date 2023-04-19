@@ -12,6 +12,14 @@ are deployed with the Git branch name, this way multiple users can work and test
 at the same time, otherwise you have multiple users tyring to deploy state machine with name <br>
 STAGING-state-machine-name. Also, user gets the option to delete deployed cloudformation Stack <br>
 with CircleCI web interface by just pushing a button.
+4 - Lambdas 'check_product_availability' & 'pay-order' are quite modular when for example the payment <br>
+methodology (by credit card, bank account or user credit) can be specified as environment variables when <br>
+creating the lambda and lambda will use specific classes depending on those environment variables.
+4 - Unit testing on the AWS Lambdas have coverage and results are saved on xml files which allows for <br>
+easier inspection on CircleCI of test results.
+5 - Package management is done with Poetry which is more painful to handle than just pip BUT it will save <br>
+a lot of problems in the future as it keeps good track of all dependencies.
+
 
 # IMPROVEMENTS THAT NEED TO BE DONE
 - Data access should be done by means of a Rest API, GRAPHQL or any other third <br>
@@ -27,4 +35,9 @@ with more available options to configure plus those project have and will have b
 these functions should be on a third party library and uploaded to aws 'codeartifact'.
 - Unit testing is included in the CI/CD BUT we should also have end-to-end testing where we actually test the <br>
 deployed pipeline.
+- CI/CD should also have documentation build/deployment.
 - Lambdas are deployed just as package code, lambdas can be deployed by means of Dockerfile if prefered.
+
+
+# INSTALLATION
+Each lambda has its own poetry.lock file, install poetry.

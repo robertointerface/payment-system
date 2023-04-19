@@ -4,6 +4,17 @@ from arrange_delivery_lambda.database_connection import (
 
 
 def lambda_handler(event, context):
+    """Arrange delivery of order products, just save database 'deliveries'
+        collection the products with the user specified delivery for that
+        product.
+        - Get order details from mongodb.
+        - iterate over each product and save the product with corresponding
+        assigned delivery address into mongodb
+
+    Args:
+        event: Dictionary containing order_id
+        context:
+    """
     order_id = event.get('order_id')
     if order_id is None:
         raise ValueError(f'order Id was not provided in event')

@@ -21,6 +21,15 @@ class ErrorData(BaseModel):
 
 
 def lambda_handler(event, context):
+    """Handle state machine errors.
+
+    Errors are saved into the specified error database.
+
+    Args:
+        event: lambda event (Dictionary) containing passed error from previous
+            state machine steps.
+        context:
+    """
     error_details = event.get('error_details')
     if error_details is None:
         raise ValueError(f'Error detail was not provided in Handle Failure Lambda')

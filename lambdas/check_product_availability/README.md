@@ -1,0 +1,1 @@
+Lambda that checks from mongodb if products requested are available
