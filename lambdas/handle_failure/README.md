@@ -1,0 +1,1 @@
+Handle failures on state  machine, currently we save them on a database.

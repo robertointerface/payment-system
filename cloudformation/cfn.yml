@@ -1,0 +1,195 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS CloudFormation template for payment state machine
+
+Parameters:
+  DatabaseClusterDomain:
+    Type: String
+  PaymentSystemDatabaseName:
+    Type: String
+  OrderDataGetter:
+    Type: String
+  PaymentDataHandler:
+    Type: String
+  ErrorDatabase:
+    Type: String
+  CurrentBranch:
+    Type: String
+
+Resources:
+  DatabaseMongoSecurityGroup:
+    Properties:
+      GroupDescription: Group to access mongodb vpc
+      GroupName: DatabaseMongoSecurityGroup
+      VpcId: vpc-0fab92b867b73a59f
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: '-1'
+          ToPort: '-1'
+          IpProtocol: -1
+    Type: 'AWS::EC2::SecurityGroup'
+
+  CreateNetworkInterfacePolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ec2:CreateNetworkInterface
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DetachNetworkInterface
+              - ec2:DeleteNetworkInterface
+            Effect: Allow
+            Resource: '*'
+        Version: '2012-10-17'
+
+  AllLogsAccessPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "logs:*"
+            Resource: "arn:aws:logs:*:*:*"
+
+
+  StateMachineLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref AllLogsAccessPolicy
+        - !Ref CreateNetworkInterfacePolicy
+      RoleName: StateMachineLambdaRole
+
+  ProcessPaymentFunctionPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "events:PutTargets"
+              - "events:PutRule"
+              - "events:DescribeRule"
+            Resource: "*"
+          - Effect: "Allow"
+            Action:
+              - "states:CreateStateMachine"
+              - "states:DescribeStateMachine"
+              - "states:StartExecution"
+              - "states:DeleteStateMachine"
+              - "states:ListExecutions"
+              - "states:DescribeExecution"
+              - "states:ListStateMachines"
+            Resource: "arn:aws:states:eu-west-2:858290205983:stateMachine:*"
+
+  ProcessPaymentStateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "states.eu-west-2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Ref AllLogsAccessPolicy
+        - !Ref ProcessPaymentFunctionPolicy
+        - arn:aws:iam::858290205983:policy/invocke-lambdas
+
+  CheckProductAvailabilityLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/check_product_availability
+      Handler: check_product_availability_lambda.lambda_handler.lambda_handler
+      Runtime: python3.8
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          PAYMENT_SYSTEM_DATABASE_NAME: !Ref PaymentSystemDatabaseName
+          ORDER_DATA_GETTER: !Ref OrderDataGetter
+          DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref DatabaseMongoSecurityGroup
+        SubnetIds:
+          - subnet-0f606614dd53ab804
+      Role: !GetAtt StateMachineLambdaRole.Arn
+
+  PaymentOrderLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/pay-order
+      Handler: pay_order_lambda.lambda_handler.lambda_handler
+      Runtime: python3.8
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          PAYMENT_SYSTEM_DATABASE_NAME: !Ref PaymentSystemDatabaseName
+          PAYMENT_DATA_HANDLER: !Ref PaymentDataHandler
+          DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref DatabaseMongoSecurityGroup
+        SubnetIds:
+          - subnet-0f606614dd53ab804
+      Role: !GetAtt StateMachineLambdaRole.Arn
+
+  HandleFailureLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/handle_failure
+      Handler: handle_failure_lambda.lambda_handler.lambda_handler
+      Runtime: python3.8
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          ERRORS_DATABASE_NAME: !Ref ErrorDatabase
+          DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+      Role: !GetAtt StateMachineLambdaRole.Arn
+
+  ArrangeDeliveryLamda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/arrange_delivery
+      Handler: arrange_delivery_lambda.lambda_handler.lambda_handler
+      Runtime: python3.8
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          PAYMENT_SYSTEM_DATABASE_NAME: !Ref PaymentSystemDatabaseName
+          DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+      Role: !GetAtt StateMachineLambdaRole.Arn
+
+  ProcessPaymentStateMachine:
+    Type: "AWS::StepFunctions::StateMachine"
+    DeletionPolicy: Retain
+    Properties:
+      StateMachineName: !Join ['-', [!Ref CurrentBranch, "process-payment"]]
+      DefinitionString: !Sub
+        - |
+        ##{{PROCESS_PAYMENT_DEF}}
+        - OrderProductsAvailableLambdaArn: !GetAtt CheckProductAvailabilityLambda.Arn
+          PaymentOrderLambdaArn: !GetAtt PaymentOrderLambda.Arn
+          HandleFailureLambdaArn: !GetAtt HandleFailureLambda.Arn
+          ArrangeDeliveryLambdaArn: !GetAtt ArrangeDeliveryLamda.Arn
+      RoleArn: !GetAtt ProcessPaymentStateMachineRole.Arn

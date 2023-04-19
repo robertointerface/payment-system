@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "handle-failure"
+version = "0.1.0"
+description = "handle failure of payment state machine"
+authors = ["roberto <robertointerface@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "handle_failure_lambda"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pymongo = {extras = ["aws"], version = "^4.3.3"}
+boto3 = "^1.26.113"
+pydantic = "^1.10.7"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+pytest-env = "^0.8.1"
+pytest-cov = "^4.0.0"
+coverage = "^7.2.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
