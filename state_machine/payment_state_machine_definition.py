@@ -153,13 +153,13 @@ def create_payment_state_machine() -> Workflow:
     )
     return workflow
 
-# if __name__ == "__main__":
-#     import boto3
-#     import json
-#     st_input = {
-#         "order_id": "311b559c-2dde-4a95-b7a3-30fbf60a2d9c"
-#     }
-#     client = boto3.client('stepfunctions')
-#     execution = client.start_execution(
-#         stateMachineArn="arn:aws:states:eu-west-2:858290205983:stateMachine:develop-handle-failure-lambda-process-payment",
-#         input=json.dumps(st_input))
+if __name__ == "__main__":
+    import boto3
+    import json
+    st_input = {
+        "order_id": "311b559c-2dde-4a95-b7a3-30fbf60a2d9c"
+    }
+    client = boto3.client('stepfunctions')
+    execution = client.start_execution(
+        stateMachineArn="arn:aws:states:eu-west-2:858290205983:stateMachine:hot-fix-running-error-process-payment",
+        input=json.dumps(st_input))

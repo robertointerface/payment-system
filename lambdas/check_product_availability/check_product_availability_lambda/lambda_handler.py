@@ -50,4 +50,4 @@ def lambda_handler(event, context):
     products_updater = products_updater_method(order_data.products)
     products_updater.update()
     return {"available": True,
-            "order": order_id}
+            "order_id": order_id}

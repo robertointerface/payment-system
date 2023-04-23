@@ -26,3 +26,4 @@ def lambda_handler(event, context):
                                                amount_to_charge=order_data.total_payment)
     payment_methodology.set_payment_details(payment_details)
     payment_methodology.make_payment()
+    return {"order_id": order_id}
