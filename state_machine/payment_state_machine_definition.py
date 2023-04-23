@@ -94,7 +94,7 @@ def create_payment_order_lambda():
         state_id=StateMachineTags.PAYMENT_ORDER,
         parameters={
             "FunctionName": ArnReferences.CHECK_ORDER_PRODUCTS_ARE_AVAILABLE_ARN,
-            "Payload.$": "$"
+            "Payload.$": "$.Payload"
         },
         timeout_seconds=STANDARD_LAMBDA_TIMEOUT_SECONDS,
         input_path="$"
@@ -113,7 +113,7 @@ def create_arrange_delivery_lambda():
         state_id=StateMachineTags.ARRANGE_DELIVERY,
         parameters={
             "FunctionName": ArnReferences.ARRANGE_DELIVERY_ARN,
-            "Payload.$": "$"
+             "Payload.$": "$.Payload"
         },
         timeout_seconds=STANDARD_LAMBDA_TIMEOUT_SECONDS,
         input_path="$"
@@ -152,3 +152,14 @@ def create_payment_state_machine() -> Workflow:
         role="arn:aws:iam::858290205983:role/step-functions-control-role"
     )
     return workflow
+
+# if __name__ == "__main__":
+#     import boto3
+#     import json
+#     st_input = {
+#         "order_id": "311b559c-2dde-4a95-b7a3-30fbf60a2d9c"
+#     }
+#     client = boto3.client('stepfunctions')
+#     execution = client.start_execution(
+#         stateMachineArn="arn:aws:states:eu-west-2:858290205983:stateMachine:develop-handle-failure-lambda-process-payment",
+#         input=json.dumps(st_input))
