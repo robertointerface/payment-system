@@ -164,6 +164,11 @@ Resources:
         Variables:
           ERRORS_DATABASE_NAME: !Ref ErrorDatabase
           DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref DatabaseMongoSecurityGroup
+        SubnetIds:
+          - subnet-0f606614dd53ab804
       Role: !GetAtt StateMachineLambdaRole.Arn
 
   ArrangeDeliveryLamda:
@@ -178,6 +183,11 @@ Resources:
         Variables:
           PAYMENT_SYSTEM_DATABASE_NAME: !Ref PaymentSystemDatabaseName
           DATABASE_CLUSTER_DOMAIN: !Ref DatabaseClusterDomain
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref DatabaseMongoSecurityGroup
+        SubnetIds:
+          - subnet-0f606614dd53ab804
       Role: !GetAtt StateMachineLambdaRole.Arn
 
   ProcessPaymentStateMachine:

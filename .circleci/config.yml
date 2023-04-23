@@ -89,6 +89,9 @@ jobs:
   delete-testing-infrastructures:
     docker:
         - image: << pipeline.parameters.python-ci-image >>
+    environment:
+      AWS_REGION: eu-west-2
+      AWS_DEFAULT_REGION: eu-west-2
     steps:
       - run:
           name: Delete Dedicated Feature Stack
